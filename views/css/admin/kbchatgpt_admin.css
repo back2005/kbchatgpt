@@ -1,0 +1,259 @@
+/* CSS for Tabs */
+.kb_custom_tabs {
+  width: 100%;
+}
+
+.kb_custom_tabs a {
+  color: #555;
+}
+
+.kb_custom_tab {
+  width: 49.8%;
+}
+
+.kb_custom_tab_last {
+  width: 25%;
+}
+
+.kb_custom_panel a {
+  position: relative;
+  background-color: #fff;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-weight: 500 !important;
+  background-color: rgb(228 243 255) !important;
+  margin-right: 10px;
+  color: #2eacce !important;
+}
+
+.kb_custom_tab i {
+  padding-right: 5px;
+}
+
+.kb_custom_tabs a {
+  display: inline-block;
+  padding: 8px 15px 8px 15px;
+  font-size: 13px;
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.kb_custom_tabs a:hover {
+  cursor: pointer;
+  color: #959595;
+  text-decoration: none;
+}
+
+.kb_custom_tabs a img {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.kb_custom_tabs a.kb_active {
+  background: #2eacce !important;
+  color: #fff !important;
+
+}
+
+.kb_custom_tabs a.kb_active::after {
+  content: "";
+  width: 0px;
+  height: 0px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #2eacce;
+  position: absolute;
+  bottom: -10px;
+  margin-left: -6%;
+}
+
+/* Start Code Added By Priyanshu on 15-June-2021 */
+/*.kb_custom_tabs a.kb_active{
+    box-shadow: none;
+}*/
+.kb_custom_tab {
+  width: auto;
+}
+
+.kb_custom_tabs a.kb_active::after {
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.kb_custom_tabs a {
+  position: relative
+}
+
+.kb_custom_tabs {
+  width: auto;
+  display: inline-block;
+}
+
+.kb_custom_panel {
+  border-radius: 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  width: 100%;
+}
+
+/* .kb_custom_tabs a.kb_active {
+    background: #2eacce;
+} */
+.kb_custom_tabs a.kb_active::after {
+  display: none;
+}
+
+.kb_custom_panel {
+  margin-bottom: 5px;
+}
+
+.kb_custom_tabs.kb_custom_panel span {
+  float: left;
+}
+
+.kb_custom_tabs span:first-child a {
+  border-left: 0;
+}
+
+.kb_custom_tabs a.kb_rule_tab.kb_active {
+  background: #296b9c;
+}
+
+.kb_custom_tabs a.kb_rule_tab.kb_active::after {
+  border-top: 6px solid #296b9c;
+}
+
+.form-item {
+  margin-bottom: 18px;
+}
+
+/* MARGIN CLASSES STARTS */
+.mb-3 {
+  margin-bottom: 15px;
+}
+
+/* MARGIN CLASSES ENDS */
+
+/* CHECKBOXES GROUP STARTS  */
+.checkbox-group .checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.checkbox-group .checkbox-item input[type=checkbox] {
+  margin-right: 10px;
+}
+
+.checkbox-group .checkbox-item label {
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+/* CHECKBOXES GROUP ENDS  */
+
+/* TOOLTIP STARTS  */
+.custom-tooltip {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-tooltip .tooltip-content {
+  /* display: none; */
+}
+
+.custom-tooltip:hover .tooltip-content {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  display: block;
+  width: 250px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 4px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.custom-tooltip:hover .tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #000 transparent transparent transparent;
+}
+
+/* TOOLTIP ENDS  */
+
+/* ALT LABEL TEXT SECTION STARTS  */
+.label-text-section {
+  display: flex;
+  align-items: center;
+}
+
+.label-text-section .left-area {
+  width: 70%;
+}
+
+.label-text-section .right-area {
+  width: 30%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hidden-input-section {
+  margin-top: 15px;
+}
+
+/* ALT LABEL TEXT SECTION ENDS  */
+
+/* CONFIGURATION SECTION STARTS */
+.change-preview-btn {
+  width: 100%;
+}
+
+.show-aligned-element {
+  width: 16px;
+  height: 16px;
+  background-color: #ccc;
+  border-radius: 2px;
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {
+    bottom: -300px;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes animatetop {
+  from {
+    bottom: -300px;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+
+/* CUSTOM MODAL POPUP CSS ENDS  */
