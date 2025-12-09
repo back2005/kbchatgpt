@@ -39,6 +39,8 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         $this->lang = false;
         $this->display = 'list';
         parent::__construct();
+
+        $this->ensurePromptTemplates();
         
         if (Tools::getValue('prompt_id')) {
             $this->toolbar_title = $this->module->l('Edit Prompt for ChatGPT', 'AdminKbchatgptPromptsController');
@@ -70,10 +72,9 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                 'orderby' => false
             ),
         );
-                    
+
         $this->addRowAction('edit');
     }
-
     /**
      * Below function is used to define the module_dir variable
      * @date 09-11-2024
@@ -110,6 +111,29 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         $this->addJS(_PS_MODULE_DIR_.$this->kb_module_name.'/views/js/admin/prompt_validation.js');
         $this->addCSS($this->module_dir .'views/css/admin/kbchatgpt_admin.css');
     }
+
+    /**
+     * Ensure only the supported prompts are present
+     * @date 15-06-2025
+     * @modifier GPT Agent
+     * @return void
+     */
+    private function ensurePromptTemplates()
+    {
+        $existing = Db::getInstance()->executeS("SELECT prompt_type FROM " . _DB_PREFIX_ . "chatgpt_prompts");
+        $existingTypes = array_map(function($row) {
+            return $row['prompt_type'];
+        }, $existing);
+
+        $expected = array('Generate Product Summary', 'Generate Product Description', 'Generate Product Title');
+        sort($existingTypes);
+        $expectedSorted = $expected;
+        sort($expectedSorted);
+
+        if ($existingTypes !== $expectedSorted) {
+            $this->module->resetPromptsToDefault();
+        }
+    }
    
    /**
      * Below function is used to translate the prompt type
@@ -125,34 +149,12 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
      */
     public function translatePromptType($value, $row)
     {
-        if($value == 'Generate Product Description') {
+        if($value == 'Generate Product Summary') {
+            return $this->module->l('Generate Product Summary', 'AdminKbchatgptPromptsController');
+        } else if($value == 'Generate Product Description') {
             return $this->module->l('Generate Product Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Generate Product Meta Title') {
-            return $this->module->l('Generate Product Meta Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Generate Product Meta Description') {
-            return $this->module->l('Generate Product Meta Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Product Title') {
-            return $this->module->l('Translate Product Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Product Description') {
-            return $this->module->l('Translate Product Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Product Meta Title') {
-            return $this->module->l('Translate Product Meta Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Product Meta Description') {
-            return $this->module->l('Translate Product Meta Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Generate Category Description') {
-            return $this->module->l('Generate Category Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Generate Category Meta Title') {
-            return $this->module->l('Generate Category Meta Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Generate Category Meta Description') {
-            return $this->module->l('Generate Category Meta Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Category Title') {
-            return $this->module->l('Translate Category Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Category Description') {
-            return $this->module->l('Translate Category Description', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Category Meta Title') {
-            return $this->module->l('Translate Category Meta Title', 'AdminKbchatgptPromptsController');
-        } else if($value == 'Translate Category Meta Description') {
-            return $this->module->l('Translate Category Meta Description', 'AdminKbchatgptPromptsController');
+        } else if($value == 'Generate Product Title') {
+            return $this->module->l('Generate Product Title', 'AdminKbchatgptPromptsController');
         }
         return '';
     }
@@ -168,8 +170,6 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         if (Tools::getvalue('kbentity')) {
             if (Tools::getvalue('kbentity') == 'product') {
                 echo $this->ajaxProductContent();
-            } else if (Tools::getvalue('kbentity') == 'category') {
-                echo $this->ajaxCategoryContent();
             }
             die;
         }
@@ -467,34 +467,20 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
     public function ajaxProductContent() {
         $action = Tools::getValue('action');
         $prompt_type = '';
-        if($action == 'generateProductDescription') {
+        if($action == 'generateProductSummary') {
+            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Summary'";
+            $prompt_type = 'Generate Product Summary';
+        } else if($action == 'generateProductDescription') {
             $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Description'";
             $prompt_type = 'Generate Product Description';
-        } else if($action == 'generateProductMetaTitle') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Meta Title'";
-            $prompt_type = 'Generate Product Meta Title';
-        } else if ($action == 'generateProductMetaDescription') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Meta Description'";
-            $prompt_type = 'Generate Product Meta Description';
-        } else if ($action == 'translateProductTitle') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Translate Product Title'";
-            $prompt_type = 'Translate Product Title';
-        } else if ($action == 'translateProductDescription') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Translate Product Description'"; 
-            $prompt_type = 'Translate Product Description';
-        } else if ($action == 'translateProductMetaTitle') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Translate Product Meta Title'";    
-            $prompt_type = 'Translate Product Meta Title';
-        } else if ($action == 'translateProductMetaDescription') {
-            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Translate Product Meta Description'";  
-            $prompt_type = 'Translate Product Meta Description';  
+        } else if ($action == 'generateProductTitle') {
+            $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Title'";
+            $prompt_type = 'Generate Product Title';
         }
-        $result = Db::getInstance()->getRow($sql);
-        if($result) {
-            if($action == 'generateProductDescription' || $action == 'generateProductMetaTitle' || $action == 'generateProductMetaDescription') {
+        if (!empty($prompt_type)) {
+            $result = Db::getInstance()->getRow($sql);
+            if($result) {
                 $this->generateProductContent($result['prompt_content'], $prompt_type);
-            } else {
-                $this->translateProductContent($result['prompt_content'], $prompt_type);
             }
         }
     }
@@ -557,33 +543,25 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         $module_settings = Configuration::get('KBChat_MODULE_CONFIGURATIONS');
         $module_settings = json_decode($module_settings, true);
         $iso = Language::getIsoById($module_settings['default_language']);
-        
+
         foreach($products as $product) {
             $productData = new Product((int) $product);
-            
-            $categoryData = new Category((int) $productData->id_category_default);
-            
+
+            $summary = isset($productData->description_short[$module_settings['default_language']]) ? $productData->description_short[$module_settings['default_language']] : '';
+            $description = isset($productData->description[$module_settings['default_language']]) ? $productData->description[$module_settings['default_language']] : '';
+            $title = isset($productData->name[$module_settings['default_language']]) ? $productData->name[$module_settings['default_language']] : '';
+
             $text = $origianlText;
-            $text = str_replace("{product_name}", $productData->name[$module_settings['default_language']], $text);
-            $text = str_replace("{shop_name}", Configuration::get('PS_SHOP_NAME'), $text);
-            $text = str_replace("{category}", $categoryData->name[$module_settings['default_language']], $text);
+            $text = str_replace("{summary}", $summary, $text);
+            $text = str_replace("{description}", $description, $text);
+            $text = str_replace("{title}", $title, $text);
 
             $postData = json_encode([
                 'model' => $module_settings['content_engine'],
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an e-commerce content generator specialized in creating SEO-optimized content for products and categories in a PrestaShop store.'],
-                    /**
-                     * Updated the content since iso code was not getting detected correctly.
-                     * @modifier Himanshu Vishwakarma
-                     * @date 24-03-2025
-                     */
                     ['role' => 'user', 'content' => $text . " in the language having iso code " . $iso ]
                 ],
-		        /**
-                 * Below code is used to set the max tokens and temperature
-                 * @date 30-12-2024
-                 * @modifier Amit Singh
-                 */
                 'max_tokens' => isset($module_settings['chatgpt_max_token'])?(int)$module_settings['chatgpt_max_token']:500,
                 'temperature' => isset($module_settings['chatgpt_temperature'])?(float)$module_settings['chatgpt_temperature']:0.1,
             ]);
@@ -601,7 +579,7 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
             curl_close($ch);
 
             $responseData = json_decode($response, true);
-            
+
             if($responseData) {
                 if(isset($responseData['error']) && $responseData['error']['message']) {
                     $sql = "INSERT INTO " . _DB_PREFIX_ . "chatgpt_logs (prompt_type, entity_id, entity_type, entity_lang, prev_content, new_content, error, date_added) VALUES ('" . pSQL($prompt_type) . "', '" . (int) $product . "', 'Product', '', '', '', '" . pSQL($responseData['error']['message']) . "', NOW())";
@@ -610,20 +588,20 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                 } else {
                     foreach(Language::getLanguages(false) as $lang) {
                         $prev_content = '';
-                        if (Tools::getValue('action') == 'generateProductDescription') {
+                        $newContent = $responseData['choices'][0]['message']['content'] ?? '';
+                        if (Tools::getValue('action') == 'generateProductSummary') {
+                            $prev_content = $productData->description_short[$lang['id_lang']];
+                            $productData->description_short[$lang['id_lang']] = $newContent;
+                        } else if (Tools::getValue('action') == 'generateProductDescription') {
                             $prev_content = $productData->description[$lang['id_lang']];
-                            $productData->description[$lang['id_lang']] = $responseData['choices'][0]['message']['content'] ?? '';
-                        } else if (Tools::getValue('action') == 'generateProductMetaTitle') {
-                            $prev_content = $productData->meta_title[$lang['id_lang']];
-                            $responseData['choices'][0]['message']['content'] = preg_replace('/^"(.+)"$/', '$1', $responseData['choices'][0]['message']['content']);
-                            $productData->meta_title[$lang['id_lang']] = $responseData['choices'][0]['message']['content'] ?? '';
-                        } else if (Tools::getValue('action') == 'generateProductMetaDescription') {
-                            $prev_content = $productData->meta_description[$lang['id_lang']];
-                            $responseData['choices'][0]['message']['content'] = preg_replace('/^"(.+)"$/', '$1', $responseData['choices'][0]['message']['content']);
-                            $productData->meta_description[$lang['id_lang']] = $responseData['choices'][0]['message']['content'] ?? '';
+                            $productData->description[$lang['id_lang']] = $newContent;
+                        } else if (Tools::getValue('action') == 'generateProductTitle') {
+                            $prev_content = $productData->name[$lang['id_lang']];
+                            $newContent = preg_replace('/^"(.+)"$/', '$1', $newContent);
+                            $productData->name[$lang['id_lang']] = $newContent;
                         }
-                        
-                        $sql = "INSERT INTO " . _DB_PREFIX_ . "chatgpt_logs (prompt_type, entity_id, entity_type, entity_lang, prev_content, new_content, error, date_added) VALUES ('" . pSQL($prompt_type) . "', '" . (int) $product . "', 'Product', '" . (int) $lang['id_lang'] . "', '" . pSQL($prev_content, true) . "', '" . pSQL($responseData['choices'][0]['message']['content'], true) . "', '', NOW())";
+                        $sql = "INSERT INTO " . _DB_PREFIX_ . "chatgpt_logs (prompt_type, entity_id, entity_type, entity_lang, prev_content, new_content, error, date_added) VALUES ('" . pSQL($prompt_type) . "', '" . (int) $product . "', 'Product', '" . (int) $lang['id_lang'] . "', '" . pSQL($prev_content, true) . "', '" . pSQL($newContent, true) . "', '', NOW())";
+
                         Db::getInstance()->execute($sql);
                     }
                     $productData->save();

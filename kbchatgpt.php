@@ -149,83 +149,51 @@ class Kbchatgpt extends Module
             && Db::getInstance()->execute($sql2))) {
             return false;
         }
-        // Insert default prompts if not already present
-        $sql = "SELECT * FROM " . _DB_PREFIX_ . "chatgpt_prompts";
-        $result = Db::getInstance()->executeS($sql);
-        if (empty($result)) {
-            $prompts = array(
-                array(
-                    'prompt_type' => 'Generate Product Description',
-                    'prompt_content' => 'Generate a detailed SEO-Friendly and engaging product description for the following product {product_name}. Make sure the description includes the main features, benefits, and use cases of the product. Please use HTML tags for formatting so the content is ready for a web page. The product is listed in the {category} category'
-                ),
-                // Below code is for future purpose if needed
-                // array(
-                //     'prompt_type' => 'Generate Product Reviews',
-                //     'prompt_content' => 'Generate a positive Product Review for the product {product_name} between the word length 15-20 which lies in the category {category}. Also, my shop name is {shop_name}'
-                // ),
-                array(
-                    'prompt_type' => 'Generate Product Meta Title',
-                    'prompt_content' => 'Generate a concise and catchy meta title for a product named "{product_name}" in the "{category}" category. Keep the title under 60 characters. Avoid using double quotes. The title should include the main keyword and attract potential customers.'
-                ),
-                array(
-                    'prompt_type' => 'Generate Product Meta Description',
-                    'prompt_content' => 'Generate a compelling meta description for the product named {product_name} which lies in the category {category}. Limit the description to about 140 characters.'
-                ),
-                array(
-                    'prompt_type' => 'Translate Product Title',
-                    'prompt_content' => 'Translate the following product title and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Product Description',
-                    'prompt_content' => 'Translate the following product description and preserve the HTML structure and tags, and only translate the visible text content and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Product Meta Title',
-                    'prompt_content' => 'Translate the following product Meta Title and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Product Meta Description',
-                    'prompt_content' => 'Translate the following product Meta Description and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Generate Category Description',
-                    'prompt_content' => 'Generate the SEO-Friendly Category Description for the {category} Generate a detailed, SEO-friendly category description for the "{category}" category. Please use HTML tags for formatting so the content is ready for a web page.'
-                ),
-                array(
-                    'prompt_type' => 'Generate Category Meta Title',
-                    'prompt_content' => 'Generate a concise and catchy meta title for a "{category}" category. Keep the title under 60 characters. The title should include the main keyword, attract potential customers, and avoid using double quotes.'
-                ),
-                array(
-                    'prompt_type' => 'Generate Category Meta Description',
-                    'prompt_content' => 'Generate a compelling meta description for the category {category}. Limit the description to about 140 characters and avoid using the double quotes.'
-                ),
-                array(
-                    'prompt_type' => 'Translate Category Title',
-                    'prompt_content' => 'Translate the following category title and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Category Description',
-                    'prompt_content' => 'Translate the following Category description and preserve the HTML structure and tags, and only translate the visible text content and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Category Meta Title',
-                    'prompt_content' => 'Translate the following Cateogry Meta Title and make sure to give translated content only'
-                ),
-                array(
-                    'prompt_type' => 'Translate Category Meta Description',
-                    'prompt_content' => 'Translate the following category meta description and make sure to give translated content only'
-                ),
-
-            );
-            foreach ($prompts as $prompt) {
-                Db::getInstance()->insert('chatgpt_prompts', $prompt);
-            }
-        }
+        // Insert default prompts
+        $this->resetPromptsToDefault();
         if (!Configuration::hasKey('KBChat_MODULE_CONFIGURATIONS')) {
             $defaultsettings = json_encode($this->getDefaultSettings());
             Configuration::updateValue('KBChat_MODULE_CONFIGURATIONS', $defaultsettings);
         }
         return parent::install() && $this->registerHook('displayBackOfficeHeader');
+    }
+
+    /**
+     * Reset the prompts table to the default set of prompts
+     * @date 15-06-2025
+     * @modifier GPT Agent
+     * @return void
+     */
+    public function resetPromptsToDefault()
+    {
+        Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'chatgpt_prompts`');
+        foreach ($this->getDefaultPrompts() as $prompt) {
+            Db::getInstance()->insert('chatgpt_prompts', $prompt);
+        }
+    }
+
+    /**
+     * Return the default prompts definitions
+     * @date 15-06-2025
+     * @modifier GPT Agent
+     * @return array
+     */
+    private function getDefaultPrompts()
+    {
+        return array(
+            array(
+                'prompt_type' => 'Generate Product Summary',
+                'prompt_content' => "Podsumowanie:\nCurrent summary: {summary}\nFull description: {description}\nCraft an improved short summary that blends both pieces of information. Preserve any HTML that appears in the summary, keep it concise, and return only the refreshed summary text.\nCreate it for SEO while maintaining this style:\nBrown basic Fire women's T-shirt with a neckline at the back – cotton, slightly loose, perfect for everyday wear, work, and going out with friends."
+            ),
+            array(
+                'prompt_type' => 'Generate Product Description',
+                'prompt_content' => "Długi opis:\nOriginal description: {description}\nImprove the description while keeping all HTML structure intact. Return only the refreshed description content.\nCreating it for SEO while maintaining this style:\n\n    The brown Fire basic women's T-shirt is a comfortable base for everyday styling.\n    The looser cut fits softly on the figure and does not restrict movement, while\n    the triangular neckline at the back adds a feminine touch to the shirt.\n  \n  \n    The cotton fabric with elastane is soft, breathable, and stretchy,\n    making the T-shirt perfect for wearing on its own or as a base layer\n    under sweatshirts or sweaters. Wear it with jeans, skirts, or fitted\n    pants—every day, to work, or when meeting friends.\n  \n\n  \n    Composition: 90% cotton, 10% elastane\n    Washing instructions: machine wash at 30°C\n    \n      Model: wears size S\n      (height 176 cm, bust 85 cm, waist 64 cm, hips 92 cm)\n    \n    \n      Dimensions of the T-shirt in size S measured flat:\n      width under the arms 56 cm, total length 67 cm\n    "
+            ),
+            array(
+                'prompt_type' => 'Generate Product Title',
+                'prompt_content' => "Tytuł:\nExisting title: {title}\nCurrent summary: {summary}\nCurrent description: {description}\nCreate a concise, compelling product title using all of the above context. Avoid using quotes and return only the final title text.\nCreate an SEO-friendly title in this style: “Brown women's basic T-shirt with a back neckline, Fire.”"
+            ),
+        );
     }
 
     /**
@@ -600,18 +568,8 @@ class Kbchatgpt extends Module
                 $this->context->controller->addCSS($this->_path . 'views/css/admin/kbchatgp.css');
             }
     
-            if ('AdminCategories' == Tools::getValue('controller')) {
-                $this->context->controller->addJS($this->_path . 'views/js/admin/categories.js');
-                /**
-                 * Updated the file name in the path to load the CSS file
-                 * @modifier Himanshu Vishwakarma
-                 * @date 19-03-2025
-                 */
-                $this->context->controller->addCSS($this->_path . 'views/css/admin/kbchatgp.css');
-            }
+            if ('AdminProducts' == Tools::getValue('controller')) {
 
-            if ('AdminProducts' == Tools::getValue('controller') || 'AdminCategories' == Tools::getValue('controller')) {
-                
                 $ajaxUrl = $this->context->link->getAdminLink('AdminKbchatgptPrompts', true);
                 $currentDomain = $_SERVER['HTTP_HOST'];
                 $parsedUrl = parse_url($ajaxUrl);
@@ -622,10 +580,6 @@ class Kbchatgpt extends Module
                 $this->context->controller->addJquery();
                 
                 $entity = 'product';
-    
-                if ('AdminCategories' == Tools::getValue('controller')) {
-                    $entity = 'category';
-                }
 
                 /**
                  * Added demo flag for the module
@@ -638,27 +592,15 @@ class Kbchatgpt extends Module
                     'ajaxUrl' => $ajaxUrl,
                     'kbchatgpt' => $demo,
                     'textdemocontentEngine' => $this->l('Content Can not be generated in Demo'),
+                    'textgenerateProductSummary' => $this->l('Generate Product Summary'),
                     'textgenerateProductDescription' => $this->l('Generate Product Description'),
+                    'textgenerateProductTitle' => $this->l('Generate Product Title'),
                     'textcontentEngine' => $this->l('Content will be generated in a few minutes.'),
                     'textError' => $this->l('An error occured.'),
-                    'texttranslateProductMetaDescription' => $this->l('Translate Product Meta Description'),
-                    'texttranslateProductMetaTitle' => $this->l('Translate Product Meta Title'),
-                    'texttranslateProductDescription' => $this->l('Translate Product Description'),
-                    'texttranslateProductTitle' => $this->l('Translate Product Title'),
-                    'textgenerateProductMetaDescription' => $this->l('Generate Product Meta Description'),
-                    'textgenerateProductMetaTitle' => $this->l('Generate Product Meta Title'),
-                    'textgenerateProductReviews' => $this->l('Generate Product Reviews'),
-                    'texttranslateCategoryDescription' => $this->l('Translate Category Description'),
-                    'texttranslateCategoryMetaDescription' => $this->l('Translate Category Meta Description'),
-                    'texttranslateCategoryMetaTitle' => $this->l('Translate Category Meta Title'),
-                    'texttranslateCategoryTitle' => $this->l('Translate Category Title'),
-                    'textgenerateCategoryDescription' => $this->l('Generate Category Description'),
-                    'textgenerateCategoryMetaDescription' => $this->l('Generate Category Meta Description'),
-                    'textgenerateCategoryMetaTitle' => $this->l('Generate Category Meta Title'),
                     'kbentity' => $entity,
                 ]);
             }
-        } 
+        }
     }
 
     /**
