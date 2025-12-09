@@ -14,48 +14,19 @@
 function kbTranslator() {
     if (window.jQuery) {
         $(function () {
-            let kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateProductMetaDescription\');">\n' + texttranslateProductMetaDescription +
+            let kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductSummary\');">\n' + textgenerateProductSummary +
                 '\n' +
                 '</a>';
             $('.js-bulk-actions-btn').next().prepend(kbelement);
             $('#product_bulk_menu').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateProductMetaTitle\');">\n' + texttranslateProductMetaTitle +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-            $('#product_bulk_menu').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateProductDescription\');">\n' + texttranslateProductDescription +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-            $('#product_bulk_menu').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateProductTitle\');">\n' + texttranslateProductTitle +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-            $('#product_bulk_menu').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductMetaDescription\');">\n' + textgenerateProductMetaDescription +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-            $('#product_bulk_menu').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductMetaTitle\');">\n' + textgenerateProductMetaTitle +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-            $('#product_bulk_menu').next().prepend(kbelement);
-
-            // kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductReviews\');">\n' + textgenerateProductReviews +
-            //     '\n' +
-            //     '</a>';
-            // $('.js-bulk-actions-btn').next().prepend(kbelement);
 
             kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductDescription\');">\n' + textgenerateProductDescription +
+                '\n' +
+                '</a>';
+            $('.js-bulk-actions-btn').next().prepend(kbelement);
+            $('#product_bulk_menu').next().prepend(kbelement);
+
+            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateProductTitle\');">\n' + textgenerateProductTitle +
                 '\n' +
                 '</a>';
             $('.js-bulk-actions-btn').next().prepend(kbelement);
