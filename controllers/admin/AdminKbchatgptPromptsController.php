@@ -531,9 +531,11 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         foreach($products as $product) {
             $productData = new Product((int) $product);
 
-            $summary = isset($productData->description_short[$module_settings['default_language']]) ? $productData->description_short[$module_settings['default_language']] : '';
-            $description = isset($productData->description[$module_settings['default_language']]) ? $productData->description[$module_settings['default_language']] : '';
-            $title = isset($productData->name[$module_settings['default_language']]) ? $productData->name[$module_settings['default_language']] : '';
+            $currentContent = $this->getProductCurrentContent((int) $product, (int) $module_settings['default_language']);
+
+            $summary = isset($currentContent['description_short']) ? $currentContent['description_short'] : '';
+            $description = isset($currentContent['description']) ? $currentContent['description'] : '';
+            $title = isset($currentContent['name']) ? $currentContent['name'] : '';
 
             $text = $origianlText;
             $text = str_replace("{summary}", $summary, $text);
@@ -572,15 +574,16 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                 } else {
                     foreach(Language::getLanguages(false) as $lang) {
                         $prev_content = '';
+                        $existingLangContent = $this->getProductCurrentContent((int) $product, (int) $lang['id_lang']);
                         $newContent = $responseData['choices'][0]['message']['content'] ?? '';
                         if (Tools::getValue('action') == 'generateProductSummary') {
-                            $prev_content = $productData->description_short[$lang['id_lang']];
+                            $prev_content = isset($existingLangContent['description_short']) ? $existingLangContent['description_short'] : '';
                             $productData->description_short[$lang['id_lang']] = $newContent;
                         } else if (Tools::getValue('action') == 'generateProductDescription') {
-                            $prev_content = $productData->description[$lang['id_lang']];
+                            $prev_content = isset($existingLangContent['description']) ? $existingLangContent['description'] : '';
                             $productData->description[$lang['id_lang']] = $newContent;
                         } else if (Tools::getValue('action') == 'generateProductTitle') {
-                            $prev_content = $productData->name[$lang['id_lang']];
+                            $prev_content = isset($existingLangContent['name']) ? $existingLangContent['name'] : '';
                             $newContent = preg_replace('/^"(.+)"$/', '$1', $newContent);
                             $productData->name[$lang['id_lang']] = $newContent;
                         }
@@ -592,6 +595,40 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                 }
             }
         }
+    }
+
+    /**
+     * Fetch the current product content for the given language directly from the database
+     * to ensure placeholders are replaced with up-to-date values.
+     *
+     * @param int $productId
+     * @param int $idLang
+     *
+     * @return array
+     */
+    private function getProductCurrentContent($productId, $idLang)
+    {
+        $idShop = (int) (isset($this->context->shop->id) ? $this->context->shop->id : Configuration::get('PS_SHOP_DEFAULT'));
+
+        $query = new DbQuery();
+        $query->select('pl.name, pl.description, pl.description_short');
+        $query->from('product_lang', 'pl');
+        $query->where('pl.id_product = ' . (int) $productId);
+        $query->where('pl.id_lang = ' . (int) $idLang);
+        $query->where('pl.id_shop = ' . (int) $idShop);
+
+        $content = Db::getInstance()->getRow($query);
+
+        if (!$content) {
+            $fallbackQuery = new DbQuery();
+            $fallbackQuery->select('pl.name, pl.description, pl.description_short');
+            $fallbackQuery->from('product_lang', 'pl');
+            $fallbackQuery->where('pl.id_product = ' . (int) $productId);
+            $fallbackQuery->where('pl.id_lang = ' . (int) $idLang);
+            $content = Db::getInstance()->getRow($fallbackQuery);
+        }
+
+        return $content ? $content : array('name' => '', 'description' => '', 'description_short' => '');
     }
 
     /**
