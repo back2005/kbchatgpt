@@ -215,8 +215,6 @@ class Kbchatgpt extends Module
             'api_key' => '',
             'content_engine' => '',
             'default_language' => '',
-            'translation_engine' => '',
-            'translation_languages[]' => array(),
             /**
             * Added default values for max token and temperature
             * @date 30-12-2024
@@ -261,8 +259,6 @@ class Kbchatgpt extends Module
             $module_settings['content_engine'] = isset($enable['content_engine'])?$enable['content_engine']:'';
             $module_settings['chatgpt_temperature'] = isset($enable['chatgpt_temperature'])?(float)$enable['chatgpt_temperature']:0.1;
             $module_settings['chatgpt_max_token'] = isset($enable['chatgpt_max_token'])?(int)$enable['chatgpt_max_token']:500;
-            $module_settings['translation_engine'] = isset($enable['translation_engine'])?$enable['translation_engine']:'';
-            $module_settings['translation_languages[]'] = isset($enable['translation_languages'])?$enable['translation_languages']:'';
             $module_settings['default_language'] = isset($enable['default_language'])?$enable['default_language']:'';
             
             // Validate the API Key and if not proper then disable the module
@@ -310,8 +306,6 @@ class Kbchatgpt extends Module
             'chatgpt_max_token' => $module_settings['chatgpt_max_token'],
             'chatgpt_temperature' => $module_settings['chatgpt_temperature'],
             'default_language' => $module_settings['default_language'],
-            'translation_engine' => $module_settings['translation_engine'],
-            'translation_languages[]' => $module_settings['translation_languages[]'],
         );
         
         $action = AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules') . '&tab_module='.$this->tab.'&module_name=' . urlencode($this->name);
@@ -474,29 +468,7 @@ class Kbchatgpt extends Module
                         'hint' => $this->l('Tokens represent chunks of words or characters. Use 500 as default maximum token.'),
                     ],
                     [
-                        'label' => $this->l('ChatGPT Engine for Translations'),
-                        'type' => 'select',
-                        'name' => 'translation_engine',
-                        'options' => [
-                            'query' => [
-                                ['id' => 'gpt-3.5-turbo', 'name' => 'GPT-3.5 Turbo'],
-                                ['id' => 'gpt-4', 'name' => 'GPT-4'],
-				                /**
-                                 * Added GPT-4 Turbo and GPT-4.0
-                                 * @date 30-12-2024
-                                 * @modifier Amit Singh
-                                 */
-                                ['id' => 'gpt-4-turbo', 'name' => 'GPT-4 Turbo'],
-                                ['id' => 'gpt-4.0', 'name' => 'GPT-4.0'],
-                            ],
-                            'id' => 'id',
-                            'name' => 'name'
-                        ],
-                        'hint' => $this->l('Select the ChatGPT engine to be used for content generation.'),
-                        'required' => true,
-                    ],
-                    [
-                        'label' => $this->l('Default Language for Translation/Content Generation'),
+                        'label' => $this->l('Default Language for Content Generation'),
                         'type' => 'select',
                         'name' => 'default_language',
                         'options' => [
@@ -504,21 +476,8 @@ class Kbchatgpt extends Module
                             'id' => 'id_lang',
                             'name' => 'name'
                         ],
-                        'hint' => $this->l('Select the default language to be used for translations and content generation.'),
+                        'hint' => $this->l('Select the default language to be used for content generation.'),
                         'required' => true,
-                    ],
-                    [
-                        'label' => $this->l('Languages to Translate Content'),
-                        'type' => 'select',
-                        'multiple' => true,
-                        'name' => 'translation_languages[]',
-                        'options' => [
-                            'query' => Language::getLanguages(false),
-                            'id' => 'id_lang',
-                            'name' => 'name'
-                        ],
-                        'hint' => $this->l('Select the languages in which the content needs to be translated.'),
-                        'desc' => $this->l('Use Ctrl+Click to select multiple languages.') . '<br>' . $this->l('Leave empty to translate content in all languages.'),
                     ]
                 ],
                 'buttons' => array(

@@ -14,27 +14,7 @@
 function kbTranslator() {
     if (window.jQuery) {
         $(function () {
-            let kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateCategoryMetaDescription\');">\n' + texttranslateCategoryMetaDescription +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateCategoryMetaTitle\');">\n' + texttranslateCategoryMetaTitle +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateCategoryDescription\');">\n' + texttranslateCategoryDescription +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'translateCategoryTitle\');">\n' + texttranslateCategoryTitle +
-                '\n' +
-                '</a>';
-            $('.js-bulk-actions-btn').next().prepend(kbelement);
-
-            kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateCategoryMetaDescription\');">\n' + textgenerateCategoryMetaDescription +
+            let kbelement = '<a class="dropdown-item" href="#" onclick="kbContent(this, \'generateCategoryMetaDescription\');">\n' + textgenerateCategoryMetaDescription +
                 '\n' +
                 '</a>';
             $('.js-bulk-actions-btn').next().prepend(kbelement);

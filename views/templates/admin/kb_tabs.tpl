@@ -47,15 +47,6 @@
                 error = 1;
             }
 
-            let def_lang = $('#default_language').val();
-
-            let set_langs = $('[name="translation_languages[]"]').val();
-
-            if(set_langs && set_langs.includes(def_lang)) {
-                error = 1;
-                $('#default_language').after('<span class="kb_error" style="color:red;">{l s='Default language should not be selected in Translation Languages' mod='kbchatgpt'}</span>');
-            }
-
             if(error == 0) {
                 return true;
             } else {
