@@ -257,3 +257,70 @@
 }
 
 /* CUSTOM MODAL POPUP CSS ENDS  */
+
+/* PROMPT GUIDANCE PANEL START */
+.kb-prompt-guide-panel {
+  background: #f5fbff;
+  border: 1px solid #d2e8f7;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+.kb-prompt-guide-header {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+.kb-prompt-guide-badge {
+  font-weight: 600;
+}
+.kb-prompt-guide-text {
+  margin: 0 0 10px 0;
+  color: #26435f;
+  line-height: 1.5;
+}
+.kb-prompt-guide-uses {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.kb-prompt-guide-uses-title {
+  font-weight: 600;
+  margin-right: 8px;
+}
+.kb-prompt-guide-use {
+  background: #e7f3ff;
+  color: #1b6fa8;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1px solid #b7daf7;
+}
+.kb-prompt-guide-example {
+  background: #fff;
+  border: 1px solid #dce7f1;
+  border-radius: 6px;
+  padding: 10px;
+}
+.kb-prompt-guide-example-title {
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: #26435f;
+}
+.kb-prompt-guide-example pre {
+  margin: 0;
+  max-height: 300px;
+  overflow: auto;
+  background: #f9fbfd;
+  border: 1px solid #e2ecf4;
+  border-radius: 4px;
+}
+.kb-prompt-guide-example code {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #0f2236;
+}
+/* PROMPT GUIDANCE PANEL END */
