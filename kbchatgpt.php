@@ -179,6 +179,26 @@ class Kbchatgpt extends Module
     }
 
     /**
+     * Return the latest default template for generating product descriptions.
+     *
+     * @return string
+     */
+    public function getDefaultProductDescriptionPrompt()
+    {
+        return "Stwórz mi opis w tym stylu: <p>Brązowy t-shirt damski basic Fire to wygodna baza do codziennych stylizacji. Luźniejszy krój miękko układa się na sylwetce i nie krępuje ruchów, a trójkątny dekolt na plecach dodaje koszulce kobiecego pazura.</p>\n<p>Bawełniana dzianina z dodatkiem elastanu jest miękka, przewiewna i elastyczna, dzięki czemu t-shirt świetnie sprawdza się zarówno solo, jak i jako pierwsza warstwa pod bluzy czy swetry. Noś go do jeansów, spódnic czy dopasowanych spodni – na co dzień, do pracy lub na spotkania ze znajomymi.</p>\n<ul>\n<li><strong>Skład:</strong> 90% bawełna, 10% elastan</li>\n<li><strong>Sposób prania:</strong> pranie w pralce w 30°C</li>\n<li><strong>Modelka:</strong> ma na sobie rozmiar S (wzrost 176 cm, biust 85 cm, talia 64 cm, biodra 92 cm)</li>\n<li><strong>Wymiary t-shirtu w rozmiarze S mierzone na płasko:</strong> szerokość pod pachami 56 cm, długość całkowita 67 cm</li>\n</ul>\n\nOdnosząc się do: {description}\nWygeneruj mi tylko kod html bez żadnych komentarzy";
+    }
+
+    /**
+     * Return the legacy default template that shipped before the style update.
+     *
+     * @return string
+     */
+    public function getLegacyProductDescriptionPrompt()
+    {
+        return "Długi opis:\nOriginal description: {description}\nImprove the description while keeping all HTML structure intact. Return only the refreshed description content.\nCreating it for SEO while maintaining this style:\n\n    The brown Fire basic women's T-shirt is a comfortable base for everyday styling.\n    The looser cut fits softly on the figure and does not restrict movement, while\n    the triangular neckline at the back adds a feminine touch to the shirt.\n  \n  \n    The cotton fabric with elastane is soft, breathable, and stretchy,\n    making the T-shirt perfect for wearing on its own or as a base layer\n    under sweatshirts or sweaters. Wear it with jeans, skirts, or fitted\n    pants—every day, to work, or when meeting friends.\n  \n\n  \n    Composition: 90% cotton, 10% elastane\n    Washing instructions: machine wash at 30°C\n    \n      Model: wears size S\n      (height 176 cm, bust 85 cm, waist 64 cm, hips 92 cm)\n    \n    \n      Dimensions of the T-shirt in size S measured flat:\n      width under the arms 56 cm, total length 67 cm\n    ";
+    }
+
+    /**
      * Return the default prompts definitions
      * @date 15-06-2025
      * @modifier GPT Agent
@@ -193,7 +213,7 @@ class Kbchatgpt extends Module
             ),
             array(
                 'prompt_type' => 'Generate Product Description',
-                'prompt_content' => "Długi opis:\nOriginal description: {description}\nImprove the description while keeping all HTML structure intact. Return only the refreshed description content.\nCreating it for SEO while maintaining this style:\n\n    The brown Fire basic women's T-shirt is a comfortable base for everyday styling.\n    The looser cut fits softly on the figure and does not restrict movement, while\n    the triangular neckline at the back adds a feminine touch to the shirt.\n  \n  \n    The cotton fabric with elastane is soft, breathable, and stretchy,\n    making the T-shirt perfect for wearing on its own or as a base layer\n    under sweatshirts or sweaters. Wear it with jeans, skirts, or fitted\n    pants—every day, to work, or when meeting friends.\n  \n\n  \n    Composition: 90% cotton, 10% elastane\n    Washing instructions: machine wash at 30°C\n    \n      Model: wears size S\n      (height 176 cm, bust 85 cm, waist 64 cm, hips 92 cm)\n    \n    \n      Dimensions of the T-shirt in size S measured flat:\n      width under the arms 56 cm, total length 67 cm\n    "
+                'prompt_content' => $this->getDefaultProductDescriptionPrompt()
             ),
             array(
                 'prompt_type' => 'Generate Product Title',

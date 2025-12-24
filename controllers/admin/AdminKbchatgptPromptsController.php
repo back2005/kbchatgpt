@@ -133,6 +133,8 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         if ($existingTypes !== $expectedSorted) {
             $this->module->resetPromptsToDefault();
         }
+
+        $this->upgradeDescriptionPromptTemplate();
     }
    
    /**
@@ -339,12 +341,6 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                     'title' => $this->module->l('Edit ChatGPT Prompt', 'AdminKbchatgptPrompts'),
                 ),
                 'input' => array(
-                    array(
-                        'type' => 'html',
-                        'name' => 'prompt_guidance',
-                        'col' => 12,
-                        'html_content' => $this->getPromptGuidanceBlock($promptType),
-                    ),
                     array(
                         'type' => 'text',
                         'label' => $this->module->l('Prompt Type', 'AdminKbchatgptPrompts'),
@@ -885,6 +881,39 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                     $categoryData->save();
                 }
             }      
+        }
+    }
+
+    /**
+     * Update the saved "Generate Product Description" prompt when the store still
+     * uses the legacy default template, so the new HTML-styled guidance reaches ChatGPT.
+     *
+     * @return void
+     */
+    private function upgradeDescriptionPromptTemplate()
+    {
+        if (!method_exists($this->module, 'getDefaultProductDescriptionPrompt')
+            || !method_exists($this->module, 'getLegacyProductDescriptionPrompt')) {
+            return;
+        }
+
+        $currentPrompt = Db::getInstance()->getValue(
+            "SELECT prompt_content FROM " . _DB_PREFIX_ . "chatgpt_prompts WHERE prompt_type = 'Generate Product Description'"
+        );
+
+        if ($currentPrompt === false) {
+            return;
+        }
+
+        $legacyPrompt = trim($this->module->getLegacyProductDescriptionPrompt());
+        $newPrompt = trim($this->module->getDefaultProductDescriptionPrompt());
+
+        if (trim((string) $currentPrompt) === $legacyPrompt) {
+            Db::getInstance()->update(
+                'chatgpt_prompts',
+                array('prompt_content' => pSQL($newPrompt, true)),
+                "prompt_type = 'Generate Product Description'"
+            );
         }
     }
 }
