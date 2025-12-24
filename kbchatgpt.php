@@ -287,7 +287,10 @@ class Kbchatgpt extends Module
         } else if (!Configuration::get('KBChat_MODULE_CONFIGURATIONS') || Configuration::get('KBChat_MODULE_CONFIGURATIONS') == '') {
             $module_settings = $this->getDefaultSettings();
         } else {
-            $module_settings = json_decode(Configuration::get('KBChat_MODULE_CONFIGURATIONS'), true); 
+            $module_settings = json_decode(Configuration::get('KBChat_MODULE_CONFIGURATIONS'), true);
+            if (!is_array($module_settings)) {
+                $module_settings = $this->getDefaultSettings();
+            }
         }
         $field_value = array(
             'module_status' => $module_settings['module_status'],
@@ -330,33 +333,11 @@ class Kbchatgpt extends Module
         $this->context->smarty->assign('selected_nav', 'config');
 
         $this->context->smarty->assign('kb_admin_link', $this->context->link->getAdminLink('AdminKbchatgptPrompts', true).'&configure='. $this->name.'&ajaxproductaction=true');
-        $this->context->smarty->assign(
-            'kb_tabs',
-            $this->context->smarty->fetch(
-                _PS_MODULE_DIR_.$this->name.'/views/templates/admin/kb_tabs.tpl'
-            )
+        $kbTabs = $this->context->smarty->fetch(
+            _PS_MODULE_DIR_.$this->name.'/views/templates/admin/kb_tabs.tpl'
         );
 
-        $helper = new HelperView();
-        $helper->module = $this;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->current = AdminController::$currentIndex . '&configure=' . $this->name;
-        $helper->show_toolbar = true;
-        $helper->toolbar_scroll = true;
-        $helper->override_folder='helpers/';
-        $helper->base_folder = 'view/';
-        $helper->base_tpl = 'page_custom.tpl';
-        $view = $helper->generateView();
-        $this->context->smarty->assign('view', $view);
-        $tpl = 'Form_custom.tpl';
-        $helper = new Helper();
-        $helper->module = $this;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG')
-        ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-        $helper->override_folder = 'helpers/';
-        $helper->base_folder = 'form/';
-        $helper->setTpl($tpl);
-        $tpl = $helper->generate();
+        $this->context->smarty->assign('kb_tabs', $kbTabs);
 
         $this->context->smarty->assign('errors', $errors);
         $output = $this->context->smarty->fetch(_PS_MODULE_DIR_.$this->name.'/views/templates/admin/errors.tpl');
@@ -366,7 +347,7 @@ class Kbchatgpt extends Module
         $configInfoTPL = $this->context->smarty->fetch(_PS_MODULE_DIR_.$this->name.'/views/templates/admin/config_info.tpl');
 
         // Render the form and return the output
-        $output = $output_msg . $output . $tpl . $configInfoTPL;
+        $output = $output_msg . $output . $kbTabs . $form . $configInfoTPL;
         return $output;
     }
 
