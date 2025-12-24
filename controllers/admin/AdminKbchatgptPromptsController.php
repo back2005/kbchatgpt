@@ -436,19 +436,61 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                 'button' => $this->module->l('Korzystaj z: {summary} + {description}', 'AdminKbchatgptPromptsController'),
                 'instruction' => $this->module->l('Twórz krótkie, marketingowe streszczenie na podstawie bieżącego opisu skróconego i pełnego. Zostaw HTML, który już istnieje, ale zadbaj o spójny ton.', 'AdminKbchatgptPromptsController'),
                 'example_html' => '<div class="product-summary">\n  <p class="lead">Brązowy t-shirt Fire z dekoltem na plecach – miękka bawełna, luźny krój, idealny na co dzień.</p>\n  <p class="meta">Materiał: 90% bawełna, 10% elastan</p>\n</div>',
-                'uses' => array('{summary}', '{description}')
+                'uses' => array('{summary}', '{description}'),
+                'steps' => array(
+                    array(
+                        'label' => $this->module->l('Cel', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Opracuj zwięzłe streszczenie produktu w tonie marketingowym.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Działanie', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Wklej wygenerowany tekst w akapicie lead i zostaw układ meta poniżej.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Źródła danych', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Uzupełnij treść na podstawie pól {summary} oraz {description}.', 'AdminKbchatgptPromptsController'),
+                    ),
+                )
             ),
             'Generate Product Description' => array(
                 'button' => $this->module->l('Korzystaj z: {description}', 'AdminKbchatgptPromptsController'),
                 'instruction' => $this->module->l('Aktualizuj długi opis, zachowując istniejącą strukturę HTML i układ akapitów, list oraz wyróżnień.', 'AdminKbchatgptPromptsController'),
                 'example_html' => '<section class="product-description">\n  <p class="intro">Bawełniany t-shirt Fire to baza do codziennych stylizacji. Luźny krój nie krępuje ruchów, a trójkątny dekolt na plecach dodaje lekkości.</p>\n  <ul class="features">\n    <li>Miękka dzianina z domieszką elastanu</li>\n    <li>Świetny jako warstwa pod bluzy i swetry</li>\n    <li>Pasuje do dżinsów, spódnic i spodni typu slim</li>\n  </ul>\n  <p class="meta">Pranie: 30°C | Skład: 90% bawełna, 10% elastan</p>\n</section>',
-                'uses' => array('{description}')
+                'uses' => array('{description}'),
+                'steps' => array(
+                    array(
+                        'label' => $this->module->l('Cel', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Rozwiń opis produktu, pozostawiając istniejące znaczniki sekcji, list i akapitów.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Działanie', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Wypełnij tekstem placeholdery w sekcji intro, liście features oraz bloku meta.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Źródła danych', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Treść generuj na bazie pola {description}.', 'AdminKbchatgptPromptsController'),
+                    ),
+                )
             ),
             'Generate Product Title' => array(
                 'button' => $this->module->l('Korzystaj z: {title} + {summary} + {description}', 'AdminKbchatgptPromptsController'),
                 'instruction' => $this->module->l('Stwórz krótki, chwytliwy tytuł na podstawie bieżącego tytułu oraz treści opisów. Bez cudzysłowów.', 'AdminKbchatgptPromptsController'),
                 'example_html' => '<h1 class="product-title">Brązowy damski t-shirt basic z dekoltem na plecach Fire</h1>',
-                'uses' => array('{title}', '{summary}', '{description}')
+                'uses' => array('{title}', '{summary}', '{description}'),
+                'steps' => array(
+                    array(
+                        'label' => $this->module->l('Cel', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Nadaj produktowi tytuł sprzedażowy, który pasuje do sklepu i SEO.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Działanie', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Podmień zawartość nagłówka H1, zostawiając klasę product-title.', 'AdminKbchatgptPromptsController'),
+                    ),
+                    array(
+                        'label' => $this->module->l('Źródła danych', 'AdminKbchatgptPromptsController'),
+                        'detail' => $this->module->l('Oprzyj propozycję na polach {title}, {summary} oraz {description}.', 'AdminKbchatgptPromptsController'),
+                    ),
+                )
             ),
         );
 
@@ -456,11 +498,30 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
             'button' => $this->module->l('Korzystaj z danych produktu', 'AdminKbchatgptPromptsController'),
             'instruction' => $this->module->l('Uzupełnij instrukcję tak, aby wskazywała źródła danych oraz oczekiwany format HTML.', 'AdminKbchatgptPromptsController'),
             'example_html' => '<div class="kb-prompt-guide-placeholder">&lt;p&gt;Dodaj przykładowy kod HTML, który pokaże styl docelowy.&lt;/p&gt;</div>',
-            'uses' => array()
+            'uses' => array(),
+            'steps' => array(
+                array(
+                    'label' => $this->module->l('Cel', 'AdminKbchatgptPromptsController'),
+                    'detail' => $this->module->l('Określ, jak powinien wyglądać wynik i z jakich pól pochodzić.', 'AdminKbchatgptPromptsController'),
+                ),
+                array(
+                    'label' => $this->module->l('Działanie', 'AdminKbchatgptPromptsController'),
+                    'detail' => $this->module->l('Dodaj przykładowy kod HTML w tabeli poniżej, aby wskazać strukturę.', 'AdminKbchatgptPromptsController'),
+                ),
+                array(
+                    'label' => $this->module->l('Źródła danych', 'AdminKbchatgptPromptsController'),
+                    'detail' => $this->module->l('Wypisz, które pola produktu lub kategorii mają zasilać prompt.', 'AdminKbchatgptPromptsController'),
+                ),
+            )
         );
 
         $usesTitle = $this->module->l('Wykorzystuje pola:', 'AdminKbchatgptPromptsController');
         $exampleTitle = $this->module->l('Przykładowy kod HTML do naśladowania', 'AdminKbchatgptPromptsController');
+        $howToTitle = $this->module->l('Jak użyć tego wzoru', 'AdminKbchatgptPromptsController');
+        $tableColumnLabel = $this->module->l('Sekcja', 'AdminKbchatgptPromptsController');
+        $tableColumnContent = $this->module->l('Treść', 'AdminKbchatgptPromptsController');
+        $instructionColumn = $this->module->l('Opis', 'AdminKbchatgptPromptsController');
+        $actionsTitle = $this->module->l('Czynności i źródła danych', 'AdminKbchatgptPromptsController');
 
         $usesBadges = '';
         if (!empty($guide['uses'])) {
@@ -477,9 +538,41 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
         $panel .= '<div class="kb-prompt-guide-header"><button type="button" class="btn btn-info kb-prompt-guide-badge">' . $guide['button'] . '</button></div>';
         $panel .= '<p class="kb-prompt-guide-text">' . $guide['instruction'] . '</p>';
         $panel .= $usesBadges;
-        $panel .= '<div class="kb-prompt-guide-example">';
-        $panel .= '<p class="kb-prompt-guide-example-title">' . $exampleTitle . '</p>';
-        $panel .= '<pre><code>' . $htmlExample . '</code></pre>';
+        $panel .= '<div class="kb-prompt-guide-table-block">';
+        $panel .= '<p class="kb-prompt-guide-table-title">' . $exampleTitle . '</p>';
+        $panel .= '<table class="table kb-prompt-guide-table">';
+        $panel .= '<thead><tr><th>' . $tableColumnLabel . '</th><th>' . $tableColumnContent . '</th></tr></thead>';
+        $panel .= '<tbody>';
+        $panel .= '<tr><td class="kb-prompt-guide-table-label">' . $this->module->l('Wzór HTML', 'AdminKbchatgptPromptsController') . '</td><td><pre><code>' . $htmlExample . '</code></pre></td></tr>';
+        $panel .= '</tbody></table>';
+        $panel .= '</div>';
+
+        $panel .= '<div class="kb-prompt-guide-table-block">';
+        $panel .= '<p class="kb-prompt-guide-table-title">' . $actionsTitle . '</p>';
+        $panel .= '<table class="table kb-prompt-guide-table">';
+        $panel .= '<thead><tr><th>' . $howToTitle . '</th><th>' . $instructionColumn . '</th></tr></thead>';
+        $panel .= '<tbody>';
+
+        if (!empty($guide['steps'])) {
+            foreach ($guide['steps'] as $index => $step) {
+                $panel .= '<tr>';
+                $panel .= '<td class="kb-prompt-guide-step">'
+                    . '<span class="kb-prompt-guide-step-count">' . sprintf($this->module->l('Krok %d', 'AdminKbchatgptPromptsController'), (int) ($index + 1)) . '</span>'
+                    . '<span class="kb-prompt-guide-step-label">' . Tools::safeOutput($step['label']) . '</span>'
+                    . '</td>';
+                $panel .= '<td>' . $step['detail'] . '</td>';
+                $panel .= '</tr>';
+            }
+        }
+
+        if (!empty($guide['uses'])) {
+            $panel .= '<tr>';
+            $panel .= '<td class="kb-prompt-guide-step">' . $this->module->l('Tokeny do podmiany', 'AdminKbchatgptPromptsController') . '</td>';
+            $panel .= '<td>' . $usesBadges . '</td>';
+            $panel .= '</tr>';
+        }
+
+        $panel .= '</tbody></table>';
         $panel .= '</div>';
         $panel .= '</div>';
 
