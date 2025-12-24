@@ -168,7 +168,13 @@ class Kbchatgpt extends Module
     {
         Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'chatgpt_prompts`');
         foreach ($this->getDefaultPrompts() as $prompt) {
-            Db::getInstance()->insert('chatgpt_prompts', $prompt);
+            Db::getInstance()->insert(
+                'chatgpt_prompts',
+                array(
+                    'prompt_type' => pSQL($prompt['prompt_type']),
+                    'prompt_content' => pSQL($prompt['prompt_content'], true),
+                )
+            );
         }
     }
 
