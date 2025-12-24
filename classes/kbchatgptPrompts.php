@@ -35,7 +35,8 @@ class kbchatgptPrompts extends ObjectModel
                 'type' => self::TYPE_STRING,
             ),
             'prompt_content' => array(
-                'type' => self::TYPE_STRING,
+                'type' => self::TYPE_HTML,
+                'validate' => 'isCleanHtml',
             ),
         ),
     );
