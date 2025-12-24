@@ -18,6 +18,9 @@ $(document).ready(function() {
         event.preventDefault();
         $('.kb_error').remove();
         error = 0;
+        if (typeof tinyMCE !== 'undefined' && tinyMCE.activeEditor) {
+            tinyMCE.triggerSave();
+        }
         // Get the value of the input field
         let prompt = $('#prompt_content').val();
 

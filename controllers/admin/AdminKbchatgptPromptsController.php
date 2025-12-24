@@ -359,11 +359,14 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                         'label' => $this->module->l('Prompt Content', 'AdminKbchatgptPrompts'),
                         'required' => true,
                         'name' => 'prompt_content',
+                        'autoload_rte' => true,
+                        'rows' => 12,
                         'col' => 4,
                         'desc' => $this->module->l('Template Variables Definition', 'AdminKbchatgptPrompts')
                         . '</br>' . $this->module->l('{product_name} - Name of the Product (Applicable only for Products)', 'AdminKbchatgptPrompts') . '<br/>'
                         . $this->module->l('{shop_name} - Name of the Shop', 'AdminKbchatgptPrompts') . '<br/>'
                         . $this->module->l('{category} - Name of the default category of the product', 'AdminKbchatgptPrompts') . '<br/>'
+                        . $this->module->l('You can freely edit HTML here to guide the GPT output format.', 'AdminKbchatgptPrompts')
                     ),
                 ),
                 'submit' => array(
