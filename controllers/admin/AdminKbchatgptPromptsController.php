@@ -320,12 +320,16 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
     protected function getAddFieldForm()
     {
         $tpl_vars = array();
+        $submit_btn = '';
+        $field_value = array();
+        $promptType = Tools::getValue('prompt_type');
+
         if ((Tools::getValue('prompt_id') != '') && Tools::getIsset('update'.$this->table)) {
             $submit_btn = 'update_submit_prompt';
-        }
-        
-        if ((Tools::getValue('prompt_id') != '') && Tools::getIsset('update'.$this->table)) {
-           $field_value = $this->getEditFieldValues();
+            $field_value = $this->getEditFieldValues();
+            if (isset($field_value['prompt_type'])) {
+                $promptType = $field_value['prompt_type'];
+            }
         }
 
         $this->fields_form = array(
@@ -335,7 +339,12 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
                     'title' => $this->module->l('Edit ChatGPT Prompt', 'AdminKbchatgptPrompts'),
                 ),
                 'input' => array(
-                    
+                    array(
+                        'type' => 'html',
+                        'name' => 'prompt_guidance',
+                        'col' => 12,
+                        'html_content' => $this->getPromptGuidanceBlock($promptType),
+                    ),
                     array(
                         'type' => 'text',
                         'label' => $this->module->l('Prompt Type', 'AdminKbchatgptPrompts'),
@@ -408,6 +417,70 @@ class AdminKbchatgptPromptsController extends ModuleAdminController
          * @date 19-03-2025
          */
         return $helper->generateForm($fields_form);
+    }
+
+    /**
+     * Build the visual guidance block for each prompt with a button, usage notes and an HTML example
+     * @date 16-06-2025
+     * @modifier GPT Agent
+     * @param string $promptType
+     * @return string
+     */
+    private function getPromptGuidanceBlock($promptType)
+    {
+        $guideList = array(
+            'Generate Product Summary' => array(
+                'button' => $this->module->l('Korzystaj z: {summary} + {description}', 'AdminKbchatgptPromptsController'),
+                'instruction' => $this->module->l('Twórz krótkie, marketingowe streszczenie na podstawie bieżącego opisu skróconego i pełnego. Zostaw HTML, który już istnieje, ale zadbaj o spójny ton.', 'AdminKbchatgptPromptsController'),
+                'example_html' => '<div class="product-summary">\n  <p class="lead">Brązowy t-shirt Fire z dekoltem na plecach – miękka bawełna, luźny krój, idealny na co dzień.</p>\n  <p class="meta">Materiał: 90% bawełna, 10% elastan</p>\n</div>',
+                'uses' => array('{summary}', '{description}')
+            ),
+            'Generate Product Description' => array(
+                'button' => $this->module->l('Korzystaj z: {description}', 'AdminKbchatgptPromptsController'),
+                'instruction' => $this->module->l('Aktualizuj długi opis, zachowując istniejącą strukturę HTML i układ akapitów, list oraz wyróżnień.', 'AdminKbchatgptPromptsController'),
+                'example_html' => '<section class="product-description">\n  <p class="intro">Bawełniany t-shirt Fire to baza do codziennych stylizacji. Luźny krój nie krępuje ruchów, a trójkątny dekolt na plecach dodaje lekkości.</p>\n  <ul class="features">\n    <li>Miękka dzianina z domieszką elastanu</li>\n    <li>Świetny jako warstwa pod bluzy i swetry</li>\n    <li>Pasuje do dżinsów, spódnic i spodni typu slim</li>\n  </ul>\n  <p class="meta">Pranie: 30°C | Skład: 90% bawełna, 10% elastan</p>\n</section>',
+                'uses' => array('{description}')
+            ),
+            'Generate Product Title' => array(
+                'button' => $this->module->l('Korzystaj z: {title} + {summary} + {description}', 'AdminKbchatgptPromptsController'),
+                'instruction' => $this->module->l('Stwórz krótki, chwytliwy tytuł na podstawie bieżącego tytułu oraz treści opisów. Bez cudzysłowów.', 'AdminKbchatgptPromptsController'),
+                'example_html' => '<h1 class="product-title">Brązowy damski t-shirt basic z dekoltem na plecach Fire</h1>',
+                'uses' => array('{title}', '{summary}', '{description}')
+            ),
+        );
+
+        $guide = isset($guideList[$promptType]) ? $guideList[$promptType] : array(
+            'button' => $this->module->l('Korzystaj z danych produktu', 'AdminKbchatgptPromptsController'),
+            'instruction' => $this->module->l('Uzupełnij instrukcję tak, aby wskazywała źródła danych oraz oczekiwany format HTML.', 'AdminKbchatgptPromptsController'),
+            'example_html' => '<div class="kb-prompt-guide-placeholder">&lt;p&gt;Dodaj przykładowy kod HTML, który pokaże styl docelowy.&lt;/p&gt;</div>',
+            'uses' => array()
+        );
+
+        $usesTitle = $this->module->l('Wykorzystuje pola:', 'AdminKbchatgptPromptsController');
+        $exampleTitle = $this->module->l('Przykładowy kod HTML do naśladowania', 'AdminKbchatgptPromptsController');
+
+        $usesBadges = '';
+        if (!empty($guide['uses'])) {
+            $badges = array();
+            foreach ($guide['uses'] as $use) {
+                $badges[] = '<span class="label label-default kb-prompt-guide-use">' . Tools::safeOutput($use) . '</span>';
+            }
+            $usesBadges = '<div class="kb-prompt-guide-uses"><span class="kb-prompt-guide-uses-title">' . $usesTitle . '</span>' . implode('', $badges) . '</div>';
+        }
+
+        $htmlExample = htmlspecialchars($guide['example_html'], ENT_QUOTES, 'UTF-8');
+
+        $panel  = '<div class="kb-prompt-guide-panel">';
+        $panel .= '<div class="kb-prompt-guide-header"><button type="button" class="btn btn-info kb-prompt-guide-badge">' . $guide['button'] . '</button></div>';
+        $panel .= '<p class="kb-prompt-guide-text">' . $guide['instruction'] . '</p>';
+        $panel .= $usesBadges;
+        $panel .= '<div class="kb-prompt-guide-example">';
+        $panel .= '<p class="kb-prompt-guide-example-title">' . $exampleTitle . '</p>';
+        $panel .= '<pre><code>' . $htmlExample . '</code></pre>';
+        $panel .= '</div>';
+        $panel .= '</div>';
+
+        return $panel;
     }
 
     public function initToolbar() {
